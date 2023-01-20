@@ -30,6 +30,7 @@ def hamming_detect(binary_string : str):
         print(i)
     print('\n', end='')
     error_indexes = set({})
+    clean_indexes = set({})
     error_index = None
     general_parity = False
     one_count = 0
@@ -38,6 +39,7 @@ def hamming_detect(binary_string : str):
             one_count += 1
     if one_count % 2 == 0:
         general_parity = True
+        print(general_parity)
     for i in parity_bits:
         parity_bit = i[0]
         represented_bits = i[1]
@@ -51,8 +53,10 @@ def hamming_detect(binary_string : str):
                 break
             error_indexes.update(represented_bits)
         elif one_count % 2 != 0 and error_count:
-
             error_indexes.intersection_update(represented_bits)
+        elif one_count % 2 == 0:
+            clean_indexes.update(represented_bits)
+    error_indexes.difference_update(clean_indexes)
     if general_parity and error_count:
         error_count = 2
     print(f"Erros achados: {error_count}")
