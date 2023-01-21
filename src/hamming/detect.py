@@ -2,6 +2,10 @@ from math import log2, ceil
 
 def hamming_detect(binary_string : str):
     error_count = 0
+    binary_string = binary_string[1:]
+    binary_string = '1' + binary_string
+    #binary_string = binary_string[:-1]
+    #binary_string = binary_string + '1'
     print(f"CADEIA BINÁRIA:\n{binary_string}\n")
     #for i, ia in enumerate(binary_string):
     #    if i % 4 == 0:
@@ -66,5 +70,7 @@ def hamming_detect(binary_string : str):
         print(f"Posição (SEC): {error_index}\nBit: {binary_string[error_index]}")
     elif error_count == 2:
         print("Posição não pode ser identificada (DED).")
+    elif not general_parity:
+        print(f"Posição (SEC): 0\nBit: {binary_string[0]}")
     else: 
         print("Código limpo em termos de hamming.")
