@@ -2,10 +2,6 @@ from math import log2, ceil
 
 def hamming_detect(binary_string : str):
     error_count = 0
-    binary_string = binary_string[1:]
-    binary_string = '1' + binary_string
-    #binary_string = binary_string[:-1]
-    #binary_string = binary_string + '1'
     print(f"CADEIA BINÁRIA:\n{binary_string}\n")
     #for i, ia in enumerate(binary_string):
     #    if i % 4 == 0:
