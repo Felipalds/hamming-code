@@ -1,13 +1,8 @@
+from math import log2, ceil
+
 def hamming_detect(binary_string : str):
     error_count = 0
-    binary_string = binary_string[4:]
-    binary_string_rev = list(binary_string)
-    binary_string_rev.reverse()
-    binary_string = ""
-    for b in binary_string_rev:
-        binary_string += b
-
-    print(binary_string)
+    print(f"CADEIA BINÁRIA:\n{binary_string}\n")
     #for i, ia in enumerate(binary_string):
     #    if i % 4 == 0:
     #        print(' ', end='')
@@ -20,17 +15,22 @@ def hamming_detect(binary_string : str):
             parity_bits.append((f"{bit}",[],))
     for i in range(len(parity_bits)):
         for j, bit in enumerate(binary_string):
-            binary_position = bin(j).rjust(8, '0')
+            binary_position = bin(j)[2:].rjust(i+1, '0')
+            #print("J:", j)
+            #print(f"BINARY POSITION: {binary_position}, I: {i}")
             if binary_position[-(i+1)] == '1':
                 parity_bits[i][1].append(j)
     visual_parity_bits = parity_bits.copy()
-    #for e, i in enumerate(visual_parity_bits):
-    #    visual_parity_bits[e] = list(i)
-    #for e, i in enumerate(visual_parity_bits):
-    #    visual_parity_bits[e][1] = [binary_string[b] for b in i[1]]
-    #for i in visual_parity_bits:
-    #    print(i)
+    for e, i in enumerate(visual_parity_bits):
+        visual_parity_bits[e] = list(i)
+    for e, i in enumerate(visual_parity_bits):
+        visual_parity_bits[e][1] = [binary_string[b] for b in i[1]]
+    print("BIT DE PARIDADE // BITS REPRESENTADO")
+    for i in visual_parity_bits:
+        print(i)
+    print('\n', end='')
     error_indexes = set({})
+    clean_indexes = set({})
     error_index = None
     general_parity = False
     one_count = 0
@@ -39,6 +39,7 @@ def hamming_detect(binary_string : str):
             one_count += 1
     if one_count % 2 == 0:
         general_parity = True
+        print(general_parity)
     for i in parity_bits:
         parity_bit = i[0]
         represented_bits = i[1]
@@ -52,9 +53,10 @@ def hamming_detect(binary_string : str):
                 break
             error_indexes.update(represented_bits)
         elif one_count % 2 != 0 and error_count:
-
             error_indexes.intersection_update(represented_bits)
-        print(error_indexes)
+        elif one_count % 2 == 0:
+            clean_indexes.update(represented_bits)
+    error_indexes.difference_update(clean_indexes)
     if general_parity and error_count:
         error_count = 2
     print(f"Erros achados: {error_count}")
@@ -64,3 +66,5 @@ def hamming_detect(binary_string : str):
         print(f"Posição (SEC): {error_index}\nBit: {binary_string[error_index]}")
     elif error_count == 2:
         print("Posição não pode ser identificada (DED).")
+    else: 
+        print("Código limpo em termos de hamming.")
