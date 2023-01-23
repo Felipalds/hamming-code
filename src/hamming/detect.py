@@ -66,5 +66,7 @@ def hamming_detect(binary_string : str):
         print(f"Posição (SEC): {error_index}\nBit: {binary_string[error_index]}")
     elif error_count == 2:
         print("Posição não pode ser identificada (DED).")
+    elif not general_parity:
+        print(f"Posição (SEC): 0\nBit: {binary_string[0]}")
     else: 
         print("Código limpo em termos de hamming.")
