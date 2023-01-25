@@ -2,80 +2,76 @@ import math
 
 def hamming_encode(file_binary_string, parity_amount):
     parity_amount += 1
-    original_string = list(file_binary_string)
-    original_string.reverse()
+    original_string = file_binary_string[::-1]
     xors = []
+    spaced_string = insertSpaceBits(original_string, parity_amount)
+    xors = getParityBits(spaced_string, parity_amount)
+    xors.reverse()
+    inserted_string = insertParityBits(xors, spaced_string)
+    last_bit_string = insertLastParityBit(inserted_string)
+    print(last_bit_string)
+    #insertInFile(last_bit_string)
 
-    insertSpaceBits(original_string, parity_amount)
-    original_dictionary = generateDictionaryByBitString(original_string, parity_amount)
-    xors = getParityBits(original_dictionary, parity_amount)
-    insertParityBits(xors, original_string)
-    insertLastParityBit(original_string)
-    insertInFile(original_string)
-
-def generateDictionaryByBitString(original_string, parity_amount):
-        
-        original_string_len_position = math.ceil(math.log2(len(original_string))) - 1
-        original_dictionary = {}
-        for i in range(parity_amount - 1):
-            for char_string_position in range(len(original_string)):
-                position_in_binary = str(bin(char_string_position))[2:].rjust(original_string_len_position + 1, '0')
-                original_dictionary[position_in_binary] = original_string[char_string_position]
-        return original_dictionary
-
-def getParityBits(original_dictionary, parity_amount):
+def getParityBits(spaced_string, parity_amount):
     xors = []
     for i in range(parity_amount - 1):
-        position = i
         xor = 0
-        keys = original_dictionary.keys()
-        for key in keys:
-            str_key = list(key)
-            str_key.reverse()
-            if(str_key[position] == '1'):
-                if(original_dictionary[key]) == '1':
+        position = 2**i
+        for j, char in enumerate(spaced_string):
+            bin_char = bin(j)[2:].rjust(parity_amount - 1, '0')
+            for pk, k in enumerate(bin_char):
+                if(pk == i and k == '1' and char == '1'):
                     xor += 1
-        xors.append(xor)
+
+        if(xor % 2 == 0):
+            xors.append(0)
+        else:
+            xors.append(1)
+
+
     return xors
 
-def insertParityBits(xors, original_string):
-    for i in range(len(xors)):
-        position = 2 ** i
-        toBeInserted = 0
-        if(xors[i] % 2 != 0):
-            toBeInserted = 1
-        original_string[position] = str(toBeInserted)
+def insertParityBits(xors, spaced_string):
+    inserted_string = spaced_string[0]
+    k = 0
+    for n, c in enumerate(spaced_string):
+        if(n!=0):
+            if(c == "P"):
+                inserted_string += str(xors[k])
+                k += 1
+            else:
+                inserted_string += c
 
-    original_string.reverse()
-    original_string.pop()
+    return inserted_string
 
 def insertSpaceBits(original_string, parity_amount):
-    original_string.insert(0, "P")
+    original_string = "P" + original_string
     for i in range(parity_amount - 1):
         position = 2 ** i
-        original_string.insert(position, "P")
+        original_string = original_string[0:position] + "P" + original_string[position:]
+        if(original_string[len(original_string) - 1]) == "P":
+            original_string = original_string[0:len(original_string)-2]
+    return original_string
 
-def insertLastParityBit(original_string):
-    original_string.reverse()
+def insertLastParityBit(inserted_string):
     xor = 0
-    for c in original_string:
+    last_bit_string = ""
+    for c in inserted_string:
         if c == '1':
             xor += 1
 
     if xor % 2 == 0:
-        original_string[0] = '0'
+        last_bit_string = "0" + inserted_string[1:]
     else:
-        original_string[0] = '1'
+        last_bit_string = "1" + inserted_string[1:]
+    return last_bit_string
 
-    original_string.reverse()
 
-
-def insertInFile(original_string):
+def insertInFile(last_bit_string):
     char_string = ""
-    f = open("zoz_nice_dick.wham", "wb")
-    for char in original_string:
+    f = open("z.wham", "wb")
+    for char in last_bit_string:
         char_string += char
-    print("CHAR STRING: ", char_string)
 
     char1=int(char_string[0:8], 2)
     char2=int(char_string[8:16], 2)
@@ -83,10 +79,7 @@ def insertInFile(original_string):
     bin1 = bin(char1)
     bin2 = bin(char2)
 
-    print(bin1, bin2)
-    print(char1, char2)
 
     char_list = bytearray([char1, char2])
-    print(char_list)
 
     f.write(char_list)

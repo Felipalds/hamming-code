@@ -16,7 +16,6 @@ if __name__ == "__main__":
         file_binary_string += byte
 
     parity_amount = math.ceil(math.log2(len(file_binary_string)) + 1)
-    
     if argv[2] == '-r': # lê arquivo detecta erros
         hamming_detect(file_binary_string)
         pass
