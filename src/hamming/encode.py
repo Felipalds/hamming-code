@@ -10,7 +10,7 @@ def hamming_encode(file_binary_string, parity_amount):
     inserted_string = insertParityBits(xors, spaced_string)
     last_bit_string = insertLastParityBit(inserted_string)
     print(last_bit_string)
-    #insertInFile(last_bit_string)
+    insertInFile(last_bit_string)
 
 def getParityBits(spaced_string, parity_amount):
     xors = []
@@ -68,18 +68,12 @@ def insertLastParityBit(inserted_string):
 
 
 def insertInFile(last_bit_string):
-    char_string = ""
-    f = open("z.wham", "wb")
-    for char in last_bit_string:
-        char_string += char
-
-    char1=int(char_string[0:8], 2)
-    char2=int(char_string[8:16], 2)
-
-    bin1 = bin(char1)
-    bin2 = bin(char2)
-
-
-    char_list = bytearray([char1, char2])
-
-    f.write(char_list)
+    v = int(last_bit_string, 2)
+    b = bytearray()
+    f = open("output.wham", "wb")
+    while v:
+        print(bin(v))
+        print(bin(v & 0xff))
+        b.append(v & 0xff)
+        v >>= 8
+    f.write(b)
