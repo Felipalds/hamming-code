@@ -10,6 +10,7 @@ def bitstring_to_bytes(s):
 
 def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
     error_count = 0
+    binary_string = binary_string[:-1] + "0" 
     print(f"CADEIA BINÁRIA:\n{binary_string}\n")
     parity_bits = []
     general_parity_bit = binary_string[0]
@@ -26,10 +27,10 @@ def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
         visual_parity_bits[e] = list(i)
     for e, i in enumerate(visual_parity_bits):
         visual_parity_bits[e][1] = [binary_string[b] for b in i[1]]
-    print("BIT DE PARIDADE // BITS REPRESENTADO")
-    for i in visual_parity_bits:
-       print(i)
-    print('\n', end='')
+    #print("BIT DE PARIDADE // BITS REPRESENTADO")
+    #for i in visual_parity_bits:
+       #print(i)
+    #print('\n', end='')
     error_indexes = set({})
     clean_indexes = set({})
     error_index = None
@@ -57,7 +58,7 @@ def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
         elif one_count % 2 == 0:
             clean_indexes.update(represented_bits)
         if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
-    print(f"CLEAN INDEXES: {clean_indexes}")
+    #print(f"CLEAN INDEXES: {clean_indexes}")
     error_indexes.difference_update(clean_indexes)
     if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
     if general_parity and error_count:
@@ -66,7 +67,7 @@ def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
     for i in parity_bits:
         syndrom_word.append(i[0])
     syndrom_word.reverse()
-    print(f"SYNDROME WORD: {syndrom_word}")
+    # print(f"SYNDROME WORD: {syndrom_word}")
     print(f"Erros achados: {error_count}")
     for ia in error_indexes:
         error_index = ia
