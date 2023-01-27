@@ -76,12 +76,29 @@ def hamming_detect(binary_string : str, file_name : str = "file.txt"):
         print(f"Posição (SEC): {error_index}\nBit: {binary_string[error_index]}")
         print("Recuperando arquivo e salvando...")
         recover_bit = '1'
+        print(binary_string)
         if binary_string[error_index] == '1':
             recover_bit = '0'
         binary_string = binary_string[:error_index] + recover_bit + binary_string[error_index+1:]
-        my_file = open(file_name, "wb")
+        print(binary_string)
+        print(bitstring_to_bytes(binary_string).hex())
+        my_file = open(file_name.replace("_recovered", ''), "wb")
         my_file.write(bitstring_to_bytes(binary_string))
         my_file.close()
+        ans = None
+        while ans != 'n':
+            print("Decodificar? [y/n]")
+            ans = input(">")
+            if ans == 'y':
+                for ia, i in enumerate(binary_string):
+                    if (ia & (ia - 1)) == 0 and ia != 0:
+                        binary_string = binary_string[:ia] + 'P' + binary_string[ia+1:]
+                binary_string = 'P' + binary_string[1:]
+                binary_string = binary_string.replace('P', '')
+                my_file = open(file_name, "wb")
+                my_file.write(bitstring_to_bytes(binary_string))
+                my_file.close()
+                break
     elif error_count == 2:
         print("Posição não pode ser identificada (DED).")
     elif not general_parity:
@@ -94,9 +111,23 @@ def hamming_detect(binary_string : str, file_name : str = "file.txt"):
         for ia, i in enumerate(binary_string):
             if (ia & (ia - 1)) == 0 and ia != 0:
                 binary_string = binary_string[:ia] + binary_string[ia+1:]
-        my_file = open(file_name, "wb")
+        my_file = open(file_name.replace("_recovered", ''), "wb")
         my_file.write(bitstring_to_bytes(binary_string))
         my_file.close()
+        ans = None
+        while ans != 'n':
+            print("Decodificar? [y/n]")
+            ans = input(">")
+            if ans == 'y':
+                for ia, i in enumerate(binary_string):
+                    if (ia & (ia - 1)) == 0 and ia != 0:
+                        binary_string = binary_string[:ia] + 'P' + binary_string[ia+1:]
+                binary_string = 'P' + binary_string[1:]
+                binary_string = binary_string.replace('P', '')
+                my_file = open(file_name, "wb")
+                my_file.write(bitstring_to_bytes(binary_string))
+                my_file.close()
+                break
     else: 
         print("Código limpo em termos de hamming.")
         
