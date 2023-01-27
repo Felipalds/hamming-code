@@ -1,2 +1,4 @@
 /src/abc.x
 /src/output.wham
+/src/hamming/__pycache__/*
+/src/hamming/__pycache__*
