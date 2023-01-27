@@ -1,17 +1,18 @@
 from math import log2, ceil
 
 def bitstring_to_bytes(s):
-    v = int(s, 2)
     b = bytearray()
-    while v:
-        b.append(v & 0xff)
-        v >>= 8
+    for i, c in enumerate(reversed(s)):
+        if (i+1) % 8 == 0:
+            bo = s[::-1][i-7:i+1][::-1]
+            b.insert(0, int(bo, 2))
     return b
 
-def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
+def hamming_detect(binary_string : str, file_name : str = "file.txt"):
+    file_name = file_name.split('.')[0] + "_recovered." + file_name.split('.')[1]
     error_count = 0
-    binary_string = binary_string[:-1] + "0" 
-    print(f"CADEIA BINÁRIA:\n{binary_string}\n")
+    print(f"CADEIA BINÁRIA:\n{binary_string[:100]}\n")
+    binary_string = binary_string[::-1]
     parity_bits = []
     general_parity_bit = binary_string[0]
     for i, bit in enumerate(binary_string):
@@ -57,10 +58,10 @@ def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
             error_indexes.intersection_update(represented_bits)
         elif one_count % 2 == 0:
             clean_indexes.update(represented_bits)
-        if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
+        # if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
     #print(f"CLEAN INDEXES: {clean_indexes}")
     error_indexes.difference_update(clean_indexes)
-    if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
+    # if len(error_indexes) > 0: print(f"ERROR INDEXES: {error_indexes}")
     if general_parity and error_count:
         error_count = 2
     syndrom_word = []
@@ -90,8 +91,27 @@ def hamming_detect(binary_string : str, file_name : str = "recovered_file.txt"):
         if binary_string[0] == '1':
             recover_bit = '0'
         binary_string = recover_bit + binary_string[1:]
+        for ia, i in enumerate(binary_string):
+            if (ia & (ia - 1)) == 0 and ia != 0:
+                binary_string = binary_string[:ia] + binary_string[ia+1:]
         my_file = open(file_name, "wb")
         my_file.write(bitstring_to_bytes(binary_string))
         my_file.close()
     else: 
         print("Código limpo em termos de hamming.")
+        
+        ans = None
+        while ans != 'n':
+            print("Decodificar? [y/n]")
+            ans = input(">")
+            if ans == 'y':
+                for ia, i in enumerate(binary_string):
+                    if (ia & (ia - 1)) == 0 and ia != 0:
+                        binary_string = binary_string[:ia] + 'P' + binary_string[ia+1:]
+                binary_string = 'P' + binary_string[1:]
+                binary_string = binary_string.replace('P', '')
+                my_file = open(file_name, "wb")
+                my_file.write(bitstring_to_bytes(binary_string))
+                my_file.close()
+                break
+

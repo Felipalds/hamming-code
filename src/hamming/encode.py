@@ -1,11 +1,15 @@
 import math
 
 def hamming_encode(file_binary_string, parity_amount):
+    new_length = math.ceil(math.log2(len(file_binary_string))) + 1
+    if math.ceil(math.log2((len(file_binary_string) + new_length))) >= new_length:
+        new_length += 1
+    while (len(file_binary_string)+new_length) % 8 != 0:
+        file_binary_string = '0' + file_binary_string
     parity_amount += 1
-    print(len(file_binary_string))
-    original_string = file_binary_string[::-1]
+    original_string = file_binary_string
     xors = []
-    spaced_string = insertSpaceBits(original_string, parity_amount)
+    spaced_string = insertSpaceBits(original_string, new_length)
     xors = getParityBits(spaced_string, parity_amount)
     xors.reverse()
     inserted_string = insertParityBits(xors, spaced_string)
@@ -56,7 +60,6 @@ def insertSpaceBits(original_string, parity_amount):
         original_string = original_string[0:position] + "P" + original_string[position:]
         if(original_string[len(original_string) - 1]) == "P":
             original_string = original_string[0:len(original_string)-2]
-    #print(original_string)
     return original_string
 
 def insertLastParityBit(inserted_string):
@@ -75,13 +78,12 @@ def insertLastParityBit(inserted_string):
 
 def insertInFile(last_bit_string, parity_amount):
     x = last_bit_string[::-1]
-    last_bit = x.rjust(2**parity_amount, "0")
-    v = int(last_bit, 2)
     b = bytearray()
+    for i, c in enumerate(x):
+        if (i+1) % 8 == 0:
+            bo = x[::-1][i-7:i+1][::-1]
+            # print(bo, ' ', int(bo, 2), ' ', end='')
+            b.insert(0, int(bo, 2))
+    # last_bit = x.rjust(2**parity_amount, "0")
     f = open("output.wham", "wb")
-    while v:
-        #print(bin(v))
-        #print(bin(v & 0xff))
-        b.append(v & 0xff)
-        v >>= 8
     f.write(b)
