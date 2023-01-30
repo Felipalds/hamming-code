@@ -12,15 +12,17 @@ def hamming_encode(file_binary_string, parity_amount):
     spaced_string = insertSpaceBits(original_string, new_length)
     xors = getParityBits(spaced_string, parity_amount)
     xors.reverse()
+    print("Inserindo bits de paridade na cadeia...")
     inserted_string = insertParityBits(xors, spaced_string)
     last_bit_string = insertLastParityBit(inserted_string)
-    #print(last_bit_string)
+    print("Escrevendo cadeia no arquivo...")
     insertInFile(last_bit_string, parity_amount)
 
 
             
 
 def getParityBits(spaced_string, parity_amount):
+    print("Achando bits de paridade...")
     xors = []
     for i in range(parity_amount - 1):
         print(i)
@@ -37,7 +39,7 @@ def getParityBits(spaced_string, parity_amount):
         else:
             xors.append(1)
 
-
+    print("Bits de paridade: ", xors)
     return xors
 
 def insertParityBits(xors, spaced_string):
@@ -50,7 +52,6 @@ def insertParityBits(xors, spaced_string):
                 k += 1
             else:
                 inserted_string += c
-    print(inserted_string)
     return inserted_string
 
 def insertSpaceBits(original_string, parity_amount):
@@ -60,7 +61,6 @@ def insertSpaceBits(original_string, parity_amount):
         original_string = original_string[0:position] + "P" + original_string[position:]
         if(original_string[len(original_string) - 1]) == "P":
             original_string = original_string[0:len(original_string)-2]
-    print(original_string)
     return original_string
 
 def insertLastParityBit(inserted_string):
@@ -83,8 +83,6 @@ def insertInFile(last_bit_string, parity_amount):
     for i, c in enumerate(x):
         if (i+1) % 8 == 0:
             bo = x[::-1][i-7:i+1][::-1]
-            # print(bo, ' ', int(bo, 2), ' ', end='')
             b.insert(0, int(bo, 2))
-    # last_bit = x.rjust(2**parity_amount, "0")
     f = open("output.wham", "wb")
     f.write(b)
