@@ -50,7 +50,7 @@ def insertParityBits(xors, spaced_string):
                 k += 1
             else:
                 inserted_string += c
-
+    print(inserted_string)
     return inserted_string
 
 def insertSpaceBits(original_string, parity_amount):
@@ -60,6 +60,7 @@ def insertSpaceBits(original_string, parity_amount):
         original_string = original_string[0:position] + "P" + original_string[position:]
         if(original_string[len(original_string) - 1]) == "P":
             original_string = original_string[0:len(original_string)-2]
+    print(original_string)
     return original_string
 
 def insertLastParityBit(inserted_string):
